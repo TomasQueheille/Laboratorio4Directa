@@ -1,0 +1,17 @@
+[
+    {
+      "city": "New York",
+      "temperature": "26°C",
+      "weather": "Sunny",
+      "description": "Clear sky",
+      "image": "https://via.placeholder.com/150"
+    },
+    {
+      "city": "London",
+      "temperature": "18°C",
+      "weather": "Cloudy",
+      "description": "Partly cloudy skies",
+      "image": "https://via.placeholder.com/150"
+    }
+  ]
+  

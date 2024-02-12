@@ -1,0 +1,1 @@
+ D:\\Tomy\\Desktop\\backup\ de\ labo\\.dart_tool\\flutter_build\\3437aa575a7674234335ba60aed5052c\\native_assets.yaml: 

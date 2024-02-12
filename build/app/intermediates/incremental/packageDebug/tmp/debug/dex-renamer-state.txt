@@ -1,0 +1,4 @@
+#Mon Feb 12 10:41:00 ART 2024
+base.0=D\:\\Tomy\\Desktop\\backup de labo\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
