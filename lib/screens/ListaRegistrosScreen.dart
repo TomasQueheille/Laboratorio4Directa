@@ -14,12 +14,13 @@ class ListaRegistrosScreen extends StatefulWidget {
 }
 
 class _ListaRegistrosScreenState extends State<ListaRegistrosScreen> {
-  String _selectedLanguage = 'en'; // Idioma seleccionado por defecto
+  String? _selectedLanguage; // Idioma seleccionado
+
   Map<String, String> _languageCodes = {
+    'Español': 'es',
     'English': 'en',
     'Français': 'fr',
     'Italiano': 'it',
-    'Español': 'es',
   };
 
   @override
@@ -43,26 +44,38 @@ class _ListaRegistrosScreenState extends State<ListaRegistrosScreen> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No hay registros disponibles.'));
+                  return Center(
+                    child: Text(
+                      'Seleccione un lenguaje para mostrar los registros',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  );
                 } else {
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       final record = snapshot.data![index];
+                      final temperatureCelsius =
+                          (record.main['temp'] - 273.15).toStringAsFixed(2);
                       return GestureDetector(
                         onTap: () {
                           _navigateToDetailsScreen(record);
                         },
                         child: Card(
                           elevation: 4,
-                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           child: Padding(
                             padding: EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Temperature: ${record.main['temp']} Cº',
+                                  'Temperature: $temperatureCelsius °C',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -101,40 +114,36 @@ class _ListaRegistrosScreenState extends State<ListaRegistrosScreen> {
   }
 
   Widget _buildLanguageDropdown() {
-  return DropdownButtonFormField<String>(
-    value: _selectedLanguage,
-    onChanged: (String? newValue) {
-      if (newValue != null) {
-        setState(() {
-          _selectedLanguage = newValue;
-          // Llamar a _fetchThirtyRecords para obtener registros con el nuevo idioma
-          _fetchThirtyRecords(widget.cityName, _selectedLanguage);
-        });
-      }
-    },
-    items: _languageCodes.keys.map<DropdownMenuItem<String>>((String key) {
-      return DropdownMenuItem<String>(
-        value: _languageCodes[key],
-        child: Text(key),
-      );
-    }).toList(),
-    decoration: InputDecoration(
-      labelText: 'Select Language',
-      border: OutlineInputBorder(),
-    ),
-  );
-}
-
+    return DropdownButtonFormField<String>(
+      value: _selectedLanguage,
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          setState(() {
+            _selectedLanguage = newValue;
+          });
+        }
+      },
+      items: _languageCodes.keys.map<DropdownMenuItem<String>>((String key) {
+        return DropdownMenuItem<String>(
+          value: _languageCodes[key],
+          child: Text(key),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        labelText: 'Select Language',
+        border: OutlineInputBorder(),
+      ),
+    );
+  }
 
   Future<List<ThirtyRecord>> _fetchThirtyRecords(
-      String? cityName, String language) async {
-    if (cityName == null || cityName.isEmpty) {
+      String? cityName, String? language) async {
+    if (cityName == null || cityName.isEmpty || language == null) {
       return [];
     }
 
-    String languageCode = _languageCodes[language] ?? 'en'; // Default to English if language code not found
     String apiUrl =
-        'https://api-rest-weather.onrender.com/api/v1/getList50Length/next30weather?city=$cityName&lang=$languageCode';
+        'https://api-rest-weather.onrender.com/api/v1/getListFiltered/next30WeatherLanguages?city=$cityName&lang=$language';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
